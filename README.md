@@ -87,7 +87,7 @@ small Python project you clone and execute.
 ### Option 1 — Run from source
 
 ```bash
-git clone https://github.com/Rainman69/SNISPF.git
+git clone https://github.com/ahmadsoo120/SNISPF.git
 cd SNISPF
 python3 run.py --info
 ```
@@ -95,7 +95,7 @@ python3 run.py --info
 ### Option 2 — `pip install` from the repo
 
 ```bash
-git clone https://github.com/Rainman69/SNISPF.git
+git clone https://github.com/ahmadsoo120/SNISPF.git
 cd SNISPF
 pip install .
 snispf --info
@@ -104,7 +104,7 @@ snispf --info
 Or in one line, without cloning:
 
 ```bash
-pip install git+https://github.com/Rainman69/SNISPF.git
+pip install git+https://github.com/ahmadsoo120/SNISPF.git
 ```
 
 > **Tip:** use a virtual environment (`python3 -m venv .venv && source .venv/bin/activate`) so the install doesn't touch your system Python.
@@ -122,8 +122,8 @@ python3 run.py --config config.json
 # Or all-CLI, no config file:
 python3 run.py \
     --listen 0.0.0.0:40443 \
-    --connect 104.19.230.21:443 \
-    --sni www.hcaptcha.com \
+    --connect 104.19.229.21:443 \
+    --sni data.hcaptcha.com \
     --method fragment
 ```
 
@@ -131,8 +131,8 @@ You should see a log line like:
 
 ```
 Listening on 0.0.0.0:40443
-Forwarding to 104.19.230.21:443
-Fake SNI: www.hcaptcha.com
+Forwarding to 104.19.229.21:443
+Fake SNI: data.hcaptcha.com
 Bypass strategy: fragment
 ```
 
@@ -163,9 +163,9 @@ python3 run.py --generate-config my_config.json
 {
   "LISTEN_HOST":       "0.0.0.0",          // Address to bind the local proxy on
   "LISTEN_PORT":       40443,              // Local TCP port to listen on
-  "CONNECT_IP":        "104.19.230.21",    // Upstream IP (typically a Cloudflare edge)
+  "CONNECT_IP":        "104.19.229.21",    // Upstream IP (typically a Cloudflare edge)
   "CONNECT_PORT":      443,                // Upstream TCP port
-  "FAKE_SNI":          "www.hcaptcha.com", // Hostname to put in the decoy/fragmented SNI
+  "FAKE_SNI":          "data.hcaptcha.com", // Hostname to put in the decoy/fragmented SNI
   "BYPASS_METHOD":     "fragment",         // fragment | fake_sni | combined
   "FRAGMENT_STRATEGY": "sni_split",        // sni_split | half | multi | tls_record_frag
   "FRAGMENT_DELAY":    0.1,                // Seconds to wait between fragments
