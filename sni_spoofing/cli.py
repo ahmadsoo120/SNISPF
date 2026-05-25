@@ -6,7 +6,7 @@ On Linux with root, enables raw packet injection for the seq_id trick.
 
 Usage:
     snispf --config config.json
-    snispf --listen 0.0.0.0:40443 --connect 104.18.38.202:443 --sni cdnjs.cloudflare.com
+    snispf --listen 0.0.0.0:40443 --connect 104.19.229.21:443 --sni data.hcaptcha.com
     snispf --check-domains domains.txt --output verified.txt
 """
 
@@ -105,9 +105,9 @@ def setup_logging(verbose: bool = False, quiet: bool = False):
 DEFAULT_CONFIG = {
     "LISTEN_HOST": "0.0.0.0",
     "LISTEN_PORT": 40443,
-    "CONNECT_IP": "104.18.38.202",
+    "CONNECT_IP": "104.19.229.21",
     "CONNECT_PORT": 443,
-    "FAKE_SNI": "cdnjs.cloudflare.com",
+    "FAKE_SNI": "data.hcaptcha.com",
     "BYPASS_METHOD": "fragment",
     "FRAGMENT_STRATEGY": "sni_split",
     "FRAGMENT_DELAY": 0.1,
@@ -139,9 +139,9 @@ def generate_config(output_path: str):
     config = {
         "LISTEN_HOST": "0.0.0.0",
         "LISTEN_PORT": 40443,
-        "CONNECT_IP": "104.18.38.202",
+        "CONNECT_IP": "104.19.229.21",
         "CONNECT_PORT": 443,
-        "FAKE_SNI": "cdnjs.cloudflare.com",
+        "FAKE_SNI": "data.hcaptcha.com",
         "BYPASS_METHOD": "fragment",
         "FRAGMENT_STRATEGY": "sni_split",
         "FRAGMENT_DELAY": 0.1,
@@ -215,8 +215,8 @@ def parse_args():
         epilog=(
             "Examples:\n"
             "  %(prog)s --config config.json\n"
-            "  %(prog)s -l 0.0.0.0:40443 -c 104.18.38.202:443 -s cdnjs.cloudflare.com\n"
-            "  %(prog)s -l :40443 -c 104.18.38.202:443 -s www.speedtest.net -m combined\n"
+            "  %(prog)s -l 0.0.0.0:40443 -c 104.19.229.21:443 -s data.hcaptcha.com\n"
+            "  %(prog)s -l :40443 -c 104.19.229.21:443 -s www.speedtest.net -m combined\n"
             "  %(prog)s --generate-config my_config.json\n"
             "\nBypass Methods:\n"
             "  fragment   - Fragment TLS ClientHello at SNI boundary (default)\n"
@@ -250,12 +250,12 @@ def parse_args():
     parser.add_argument(
         "--connect", "-c",
         metavar="IP:PORT",
-        help="Target server address (default: 104.18.38.202:443)",
+        help="Target server address (default: 104.19.229.21:443)",
     )
     parser.add_argument(
         "--sni", "-s",
         metavar="HOSTNAME",
-        help="Fake SNI hostname (default: cdnjs.cloudflare.com)",
+        help="Fake SNI hostname (default: data.hcaptcha.com)",
     )
 
     # Bypass settings
@@ -506,7 +506,7 @@ def main():
         config["LISTEN_PORT"] = port
 
     if args.connect:
-        host, port = parse_host_port(args.connect, "104.18.38.202", 443)
+        host, port = parse_host_port(args.connect, "104.19.229.21", 443)
         config["CONNECT_IP"] = host
         config["CONNECT_PORT"] = port
 
