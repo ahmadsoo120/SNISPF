@@ -66,7 +66,7 @@ def _build_banner() -> str:
         "     │  SNISPF - Cross-Platform DPI Bypass Tool                        │\n"
         f"     │  {version_line:<63}│\n"
         "     │  Works on Windows / macOS / Linux                               │\n"
-        "     │  https://github.com/Rainman69/SNISPF                            │\n"
+        "     │  https://github.com/ahmadsoo120/SNISPF                            │\n"
         "     └──────────────────────────────────────────────────────────────────┘\n"
     )
 
