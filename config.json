@@ -1,8 +1,8 @@
 {
-  "LISTEN_HOST": "0.0.0.0",
+  "LISTEN_HOST": "127.0.0.0",
   "LISTEN_PORT": 40443,
   "CONNECT_IP": "104.19.229.21",
-  "CONNECT_PORT": 443,
+  "CONNECT_PORT": 4430,
   "FAKE_SNI": "data.hcaptcha.com",
   "BYPASS_METHOD": "fragment",
   "FRAGMENT_STRATEGY": "sni_split",
