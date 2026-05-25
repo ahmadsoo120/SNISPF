@@ -57,6 +57,8 @@ CLOUDFLARE_IPV4_RANGES = [
     "104.24.0.0/14",
     "172.64.0.0/13",
     "131.0.72.0/22",
+    "104.0.229.0/22",
+    "104.0.230.0/22",
 ]
 
 # Cloudflare IP networks (parsed once for fast lookups)
