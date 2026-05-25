@@ -41,7 +41,7 @@ class TestClientHelloBuilder(unittest.TestCase):
 
     def test_build_client_hello_contains_sni(self):
         """Test that built ClientHello contains the specified SNI."""
-        sni = "auth.vercel.com"
+        sni = "data.hcaptcha.com"
         hello = ClientHelloBuilder.build_client_hello(sni=sni)
 
         # The SNI should be present in the packet
@@ -49,7 +49,7 @@ class TestClientHelloBuilder(unittest.TestCase):
 
     def test_build_client_hello_different_snis(self):
         """Test building with different SNI values."""
-        for sni in ["google.com", "cloudflare.com", "example.org", "test.co"]:
+        for sni in ["google.com", "cloudflare.com", "example.org", "test.co", "data.hcaptcha.com"]:
             hello = ClientHelloBuilder.build_client_hello(sni=sni)
             self.assertIn(sni.encode("ascii"), hello)
             self.assertEqual(hello[0], 0x16)
@@ -72,7 +72,7 @@ class TestClientHelloBuilder(unittest.TestCase):
 
     def test_parse_client_hello_roundtrip(self):
         """Test build and parse roundtrip."""
-        sni = "auth.vercel.com"
+        sni = "data.hcaptcha.com"
         hello = ClientHelloBuilder.build_client_hello(sni=sni)
         parsed = ClientHelloBuilder.parse_client_hello(hello)
 
