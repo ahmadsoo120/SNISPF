@@ -179,6 +179,13 @@ def build_strategy(config: dict, raw_injector=None) -> BypassStrategy:
             method=config.get("FAKE_SNI_METHOD", "prefix_fake"),
             raw_injector=raw_injector,
             use_ttl_trick=config.get("USE_TTL_TRICK", False),
+            # When a raw injector is active, also fragment the real
+            # ClientHello at the SNI boundary so that DPI which
+            # reassembles the TCP stream cannot match the SNI on the
+            # real handshake. Required for some xhttp / ws configs
+            # (e.g. multi-value ALPN like h3,h2,http/1.1).
+            fragment_real=config.get("FAKE_SNI_FRAGMENT_REAL", True),
+            fragment_strategy=config.get("FRAGMENT_STRATEGY", "sni_split"),
         )
     elif method == "combined":
         return CombinedBypass(

@@ -25,6 +25,11 @@ from ..tls.fragment import fragment_client_hello
 
 logger = logging.getLogger("snispf")
 
+# Delay between TLS fragments when fragmenting the real ClientHello
+# after the seq_id fake injection. Matches the value used in the
+# combined strategy so behaviour is consistent.
+_REAL_FRAGMENT_DELAY = 0.1
+
 
 class FakeSNIBypass(BypassStrategy):
     """Bypass DPI by injecting a fake TLS ClientHello with spoofed SNI.
@@ -46,10 +51,30 @@ class FakeSNIBypass(BypassStrategy):
     name = "fake_sni"
 
     def __init__(self, method: str = "prefix_fake", raw_injector=None,
-                 use_ttl_trick: bool = False):
+                 use_ttl_trick: bool = False,
+                 fragment_real: bool = True,
+                 fragment_strategy: str = "sni_split"):
+        """Initialise the fake_sni strategy.
+
+        Args:
+            method: Sub-method name (kept for backwards compatibility).
+            raw_injector: Active ``RawInjector`` instance or ``None``.
+            use_ttl_trick: Force the TTL trick fallback path.
+            fragment_real: When a raw injector is active, also fragment
+                the real ClientHello at the SNI boundary after the
+                out-of-window fake has been confirmed. This protects
+                against DPI that reassembles TCP and matches the SNI
+                on the real stream (observed with some xhttp / ws
+                configs that carry larger ClientHello records, e.g.
+                multi-value ALPN). Defaults to ``True``.
+            fragment_strategy: Fragmentation strategy passed through to
+                ``fragment_client_hello`` when ``fragment_real`` is on.
+        """
         self.method = method
         self.raw_injector = raw_injector
         self.use_ttl_trick = use_ttl_trick
+        self.fragment_real = fragment_real
+        self.fragment_strategy = fragment_strategy
 
     async def apply(
         self,
@@ -89,7 +114,18 @@ class FakeSNIBypass(BypassStrategy):
         loop,
     ) -> bool:
         """With raw injection, the fake was already sent out-of-window.
-        Just send the real ClientHello normally."""
+
+        After the server confirms it ignored the fake, send the real
+        ClientHello. By default the real ClientHello is also split at
+        the SNI boundary; this matches the behaviour of the ``combined``
+        strategy and is required for stricter DPI that reassembles the
+        TCP stream and matches the SNI on the real handshake (observed
+        with xhttp / ws configs that carry larger ClientHellos, e.g.
+        multi-value ALPN such as ``h3,h2,http/1.1``).
+
+        Set ``fragment_real=False`` to restore the previous behaviour
+        of sending the real ClientHello as a single segment.
+        """
         try:
             local_port = server_sock.getsockname()[1]
 
@@ -107,8 +143,36 @@ class FakeSNIBypass(BypassStrategy):
                     f"ignored (timeout). Sending real data anyway."
                 )
 
-            # Send the real ClientHello (untouched)
-            await loop.sock_sendall(server_sock, first_data)
+            # Send the real ClientHello. Fragmenting at the SNI boundary
+            # in addition to the seq_id trick covers DPI that does TCP
+            # reassembly on the real stream (some xhttp / ws configs).
+            if self.fragment_real:
+                try:
+                    server_sock.setsockopt(
+                        socket.IPPROTO_TCP, socket.TCP_NODELAY, 1
+                    )
+                except OSError:
+                    pass
+
+                fragments = fragment_client_hello(
+                    first_data, self.fragment_strategy
+                )
+
+                for i, fragment in enumerate(fragments):
+                    await loop.sock_sendall(server_sock, fragment)
+                    if i < len(fragments) - 1 and _REAL_FRAGMENT_DELAY > 0:
+                        await asyncio.sleep(_REAL_FRAGMENT_DELAY)
+
+                try:
+                    server_sock.setsockopt(
+                        socket.IPPROTO_TCP, socket.TCP_NODELAY, 0
+                    )
+                except OSError:
+                    pass
+            else:
+                # Legacy path: send the real ClientHello untouched.
+                await loop.sock_sendall(server_sock, first_data)
+
             return True
 
         except Exception:
