@@ -79,7 +79,7 @@ SNISPF فقط به‌صورت **سورس** توزیع می‌شود؛ هیچ Rel
 ### روش ۱ — اجرا از سورس
 
 ```bash
-git clone https://github.com/Rainman69/SNISPF.git
+git clone https://github.com/ahmadsoo120/SNISPF.git
 cd SNISPF
 python3 run.py --info
 ```
@@ -87,7 +87,7 @@ python3 run.py --info
 ### روش ۲ — نصب با pip
 
 ```bash
-git clone https://github.com/Rainman69/SNISPF.git
+git clone https://github.com/ahmadsoo120/SNISPF.git
 cd SNISPF
 pip install .
 snispf --info
@@ -96,7 +96,7 @@ snispf --info
 یا تک‌خطی، بدون کلون کردن:
 
 ```bash
-pip install git+https://github.com/Rainman69/SNISPF.git
+pip install git+https://github.com/ahmadsoo120/SNISPF.git
 ```
 
 > **نکته:** برای جلوگیری از به‌هم‌ریختن Python سیستم، از یک محیط مجازی
@@ -115,8 +115,8 @@ python3 run.py --config config.json
 # یا کاملاً با CLI، بدون فایل کانفیگ
 python3 run.py \
     --listen 0.0.0.0:40443 \
-    --connect 104.19.230.21:443 \
-    --sni www.hcaptcha.com \
+    --connect 104.19.229.21:443 \
+    --sni data.hcaptcha.com \
     --method fragment
 ```
 
@@ -124,8 +124,8 @@ python3 run.py \
 
 ```
 Listening on 0.0.0.0:40443
-Forwarding to 104.19.230.21:443
-Fake SNI: www.hcaptcha.com
+Forwarding to 104.19.229.21:443
+Fake SNI: data.hcaptcha.com
 Bypass strategy: fragment
 ```
 
@@ -155,9 +155,9 @@ python3 run.py --generate-config my_config.json
 {
   "LISTEN_HOST":       "0.0.0.0",
   "LISTEN_PORT":       40443,
-  "CONNECT_IP":        "104.19.230.21",
+  "CONNECT_IP":        "104.19.229.21",
   "CONNECT_PORT":      443,
-  "FAKE_SNI":          "www.hcaptcha.com",
+  "FAKE_SNI":          "data.hcaptcha.com",
   "BYPASS_METHOD":     "fragment",     // fragment | fake_sni | combined
   "FRAGMENT_STRATEGY": "sni_split",
   "FRAGMENT_DELAY":    0.1,
